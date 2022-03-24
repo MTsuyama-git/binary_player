@@ -10,10 +10,12 @@
 #include <time.h>
 #include <sys/time.h>
 
-int calc_time(struct timespec* start_time, struct timespec* end_time) {
-    int nsec;
-    nsec = end_time->tv_nsec - start_time->tv_nsec;
-    return (nsec / 1000.0) ;
+uint32_t calc_time(struct timespec* start_time, struct timespec* end_time) {
+    int nsec, sec, result;
+    sec = end_time->tv_sec - start_time->tv_sec;
+    nsec = end_time->tv_nsec  - start_time->tv_nsec;
+    result =(nsec / 1000000 + sec * 1000) ;; 
+    return result;
 }
 
 int main(int argc, char** argv) {
@@ -27,6 +29,7 @@ int main(int argc, char** argv) {
     uint32_t nof, frame_size;
     uint8_t* buffer;
     float mspf;
+    int uspf;
     FILE* f = NULL, *g = NULL;
     uint8_t* bmp_buffer;
     uint8_t* buffer_array[1];
@@ -89,6 +92,7 @@ int main(int argc, char** argv) {
     fread(&nof, sizeof(uint32_t), 1, f);
     // read ms per frame
     fread(&mspf, sizeof(float), 1, f);
+    uspf = mspf;
 
     fprintf(stdout, "FORMAT     :0x%04X\n", fmt);
     fprintf(stdout, "VERSION    :0x%04X\n", ver);
@@ -134,10 +138,10 @@ int main(int argc, char** argv) {
 	fclose(g);
 	free(buffer);
 	clock_gettime(CLOCK_REALTIME, &end_time);
-// 	while(calc_time(&start_time, &end_time) < mspf) {
-// 	    usleep(100);
-// 	    clock_gettime(CLOCK_REALTIME, &end_time);
-// 	}
+ 	while(calc_time(&start_time, &end_time) < uspf) {
+ 	    usleep(100);
+ 	    clock_gettime(CLOCK_REALTIME, &end_time);
+ 	}
     }
     fclose(f);
     free(bmp_buffer);
