@@ -1,7 +1,7 @@
 # Binary Player
 
 ## About
-These programs plays binary files encoded with
+These programs play binary files encoded with
 [BinaryDecoder](https://github.com/MTsuyama-git/video_encoder) on
 frame buffer.
 - playBinary for traw files(noncompressed video binary)
